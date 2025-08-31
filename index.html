@@ -42,24 +42,17 @@
         }
 
         /* Navigation */
-        nav {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          padding: 1.5rem 0;
-          z-index: 1000;
-
-          /* Glassy style */
-          backdrop-filter: blur(15px);
-          -webkit-backdrop-filter: blur(15px);
-          background-color: rgba(255, 255, 255, 0.70);
-
-          /* Separation */
-            box-shadow:
-              0 8px 20px rgba(0, 0, 0, 0.12),   /* big soft outer */
-              0 4px 10px rgba(0, 0, 0, 0.08),   /* medium blur */
-              0 2px 5px rgba(0, 0, 0, 0.02);    /* sharper close shadow */
+         nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1.5rem 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.8);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
         }
 
         .nav-container {
