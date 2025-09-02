@@ -42,24 +42,24 @@
         }
 
         /* Navigation */
-         nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 1.5rem 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            background-color: rgba(255, 255, 255, 0.8);
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-        }
+        nav {
+                   position: fixed;
+                   top: 0;
+                   left: 0;
+                   width: 100%;
+                   padding: 1.5rem 0;
+                   z-index: 1000;
+                   backdrop-filter: blur(10px);
+                   -webkit-backdrop-filter: blur(10px);
+                   background-color: rgba(255, 255, 255, 0.8);
+                   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+               }
 
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+               .nav-container {
+                   display: flex;
+                   justify-content: space-between;
+                   align-items: center;
+               }
 
         .logo {
             font-size: 1.8rem;
@@ -284,6 +284,7 @@
           position: relative;
           z-index: 2;
         }
+        
 
         /* Sections */
         section {
@@ -300,6 +301,17 @@
             font-size: 2.8rem;
             font-weight: 700;
             margin-bottom: 1rem;
+        }
+        .section-header h2 span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .section-header h2 span.visible {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         .section-header p {
@@ -342,6 +354,25 @@
             font-size: 2rem;
             margin-bottom: 1.5rem;
             color: var(--text-primary);
+
+            /* gradient wave effect */
+            background: linear-gradient(
+                270deg,
+                var(--text-primary),
+                var(--accent),
+                var(--text-primary)
+            );
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+
+            animation: waveGradient 6s ease-in-out infinite;
+        }
+
+        @keyframes waveGradient {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .about-text p {
@@ -364,8 +395,30 @@
             border-radius: 20px;
             font-size: 0.9rem;
             border: 1px solid rgba(0, 113, 227, 0.2);
+            box-shadow: 0 2px 5px rgba(0, 113, 227, 0.15),
+                        0 -2px 5px rgba(0, 113, 227, 0.08),
+                        2px 0 5px rgba(0, 113, 227, 0.08),
+                        -2px 0 5px rgba(0, 113, 227, 0.08);
+
+            /* initial hidden state */
+            opacity: 0;
+            transform: scale(0.7);
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.25, 1.25, 0.5, 1);
+            cursor: pointer;
         }
 
+        .skill.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .skill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 113, 227, 0.25),
+                        0 -3px 8px rgba(0, 113, 227, 0.12),
+                        3px 0 8px rgba(0, 113, 227, 0.12),
+                        -3px 0 8px rgba(0, 113, 227, 0.12);
+        }
         /* Projects Section */
         .projects-grid {
             display: grid;
@@ -452,14 +505,16 @@
         }
 
         .contact-text a {
-            color: var(--text-secondary);
+            color: var(--accent);
+            font-weight: 600;
             text-decoration: none;
-            transition: color 0.3s ease;
+            position: relative;
+            display: inline-block;
+            transition: all 0.3s ease;
         }
 
         .contact-text a:hover {
-            color: var(--accent);
-            text-decoration: underline;
+            color: var(--accent-hover);
         }
 
         .contact-form {
@@ -912,6 +967,61 @@
       // Start after 0.5s delay
       setTimeout(typeWriter, 500);
     });
+    </script>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const target = document.querySelector("#contact .section-header h2");
+      
+      // Split into spans
+      const words = target.innerText.split(" ");
+      target.innerHTML = words.map(w => `<span>${w}</span>`).join(" ");
+
+      const spans = target.querySelectorAll("span");
+
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            spans.forEach((span, i) => {
+              setTimeout(() => {
+                span.classList.add("visible");
+              }, i * 200); // stagger effect
+            });
+            observer.unobserve(entry.target); // run once
+          }
+        });
+      }, { threshold: 0.5 });
+
+      observer.observe(target);
+    });
+    </script>
+    <script>
+      // Bubble-grow with accelerating stagger
+      document.addEventListener("DOMContentLoaded", () => {
+        const skills = document.querySelectorAll("#about .skill");
+
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              setTimeout(() => {
+                const baseDelay = 300; // starting delay
+                const decay = 0.8;     // multiplier < 1 = faster each step
+                let delay = 0;
+
+                skills.forEach((skill, i) => {
+                  setTimeout(() => {
+                    skill.classList.add("visible");
+                  }, delay);
+                  delay += baseDelay * Math.pow(decay, i);
+                });
+              }, 400); // wait a bit after entering
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.3 });
+
+        const aboutSection = document.querySelector("#about");
+        if (aboutSection) observer.observe(aboutSection);
+      });
     </script>
     
 </body>
